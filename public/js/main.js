@@ -85,6 +85,7 @@
     if (p.tall) fig.classList.add('tall');
     const img = document.createElement('img');
     img.src = p.src; img.alt = p.alt; img.loading = 'lazy';
+    if (p.pos) img.style.objectPosition = p.pos; // keep faces in frame
     img.addEventListener('error', () => fig.remove()); // missing photo? just hide the tile
     fig.appendChild(img);
     grid.appendChild(fig);
