@@ -23,6 +23,25 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
+  // ---------- Drifting sand (scroll-linked) ----------
+  // Grain layer drifts slower than the page; the wind-ripple layer slides sideways,
+  // so the beach looks alive as you scroll. Skipped for reduced-motion users.
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const rootStyle = document.documentElement.style;
+    let ticking = false;
+    const drift = () => {
+      const y = window.scrollY;
+      rootStyle.setProperty('--sand-y', (-y * 0.18).toFixed(1));
+      rootStyle.setProperty('--sand-ry', (-y * 0.32).toFixed(1));
+      rootStyle.setProperty('--sand-rx', (y * 0.22).toFixed(1));
+      ticking = false;
+    };
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(drift); }
+    }, { passive: true });
+    drift();
+  }
+
   // ---------- Open-now pill (Maine time) ----------
   try {
     const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
@@ -72,7 +91,7 @@
   });
 
   // ---------- Reveal on scroll ----------
-  const revealEls = document.querySelectorAll('.section-head, .steps li, .sig, .full-menu, .hours-card, .review-big, .story-photos, .market-photo, .booking-form, .gift-card');
+  const revealEls = document.querySelectorAll('.section-head, .ticket-wrap, .sig, .full-menu, .hours-card, .review-big, .story-photos, .market-photo, .booking-form, .gift-card');
   if ('IntersectionObserver' in window) {
     revealEls.forEach(el => el.classList.add('reveal'));
     const io = new IntersectionObserver(entries => {
